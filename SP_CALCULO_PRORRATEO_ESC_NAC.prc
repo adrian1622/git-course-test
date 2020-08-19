@@ -284,7 +284,7 @@ BEGIN
                      A.CLAVE_CAMPUS,
                      A.CLAVE_MAJOR_PGMA_ACAD,
                      ETAPA,
-                     A.CLAVE_ESCUELA_NACIONAL,
+                     D.CLAVE_ESCUELA_NACIONAL,
                      B.DESC_ESCUELA,
                      COUNT (
                         0)
@@ -292,7 +292,7 @@ BEGIN
                         PARTITION BY A.CLAVE_EJERCICIO_INDICADOR,
                                      A.CLAVE_CAMPUS,
                                      A.CLAVE_MAJOR_PGMA_ACAD,
-                                     A.CLAVE_ESCUELA_NACIONAL
+                                     D.CLAVE_ESCUELA_NACIONAL
                                      )
                         AS TOTAL_CLAVE_MAJOR_AD_HE_IC,
                      COUNT (
@@ -303,9 +303,11 @@ BEGIN
                                      A.CLAVE_MAJOR_PGMA_ACAD)
                         AS TOTAL_CLAVE_MAJOR_CAMPUS
                 FROM DMESCO.ATRA_DET_SOLICITANTE A
-                     JOIN
+                     JOIN DMESCO.ATRA_REL_MAJOR_ESCUELA D
+                    ON A.CLAVE_MAJOR_SOLICITANTE = D.CLAVE_MAJOR_PGMA_ACAD    
+                    JOIN
                      DMESCO.ATRA_DIM_ESCUELA_NACIONAL B
-                        ON A.CLAVE_ESCUELA_NACIONAL =
+                        ON D.CLAVE_ESCUELA_NACIONAL =
                               B.CLAVE_ESCUELA_NACIONAL
                      JOIN
                      DMESCO.ATRA_CFG_ESCUELA_NAC_PRORRATEO C
@@ -314,7 +316,7 @@ BEGIN
                            AND A.CLAVE_CAMPUS = C.CLAVE_CAMPUS
                            AND A.CLAVE_MAJOR_PGMA_ACAD =
                                   C.CLAVE_MAJOR_PGMA_ACAD
-                           AND A.CLAVE_ESCUELA_NACIONAL =
+                           AND D.CLAVE_ESCUELA_NACIONAL =
                                   C.CLAVE_ESCUELA_NACIONAL
                            AND ESTATUS_CARGA = ''A''
                            AND TIPO_CARGA = ''A''
@@ -325,7 +327,7 @@ BEGIN
       || P_CORTE
       || '''
                AND A.FECHA_INFORMACION = TO_DATE ( '''||FECHA_INFORMACION ||''', ''YYYY-MM-DD'')               
-                     AND A.CLAVE_ESCUELA_NACIONAL NOT IN (10, 11)
+                     AND D.CLAVE_ESCUELA_NACIONAL NOT IN (10, 11)
                      AND A.CLAVE_MAJOR_PGMA_ACAD IN (''ESC'', ''AMC'')
                      AND A.IND_CONSIDERADO_BASE =''SI''
                      AND '
