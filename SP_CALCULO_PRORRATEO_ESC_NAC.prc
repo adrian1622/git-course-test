@@ -139,7 +139,7 @@ BEGIN
       || '''
                 AS ETAPA,
                ''A'' AS TIPO_CARGA,
-               A.CLAVE_ESCUELA_NACIONAL,               
+               C.CLAVE_ESCUELA_NACIONAL,               
                NULL as PORCENTAJE_PRORRATEO,
                NULL as TOTAL_REGISTROS_DISTRIBUIR,
                trunc(SYSDATE) AS FECHA_INICIO_PRORRATEO,
@@ -154,13 +154,15 @@ BEGIN
                 END
                    AS ACCION
           FROM DMESCO.ATRA_DET_SOLICITANTE A
+               JOIN DMESCO.ATRA_REL_MAJOR_ESCUELA C
+               ON A.CLAVE_MAJOR_SOLICITANTE = C.CLAVE_MAJOR_PGMA_ACAD
                LEFT JOIN
                DMESCO.ATRA_CFG_ESCUELA_NAC_PRORRATEO B
                   ON     A.CLAVE_EJERCICIO_INDICADOR =
                             B.CLAVE_EJERCICIO_INDICADOR
                      AND A.CLAVE_CAMPUS = B.CLAVE_CAMPUS
                      AND A.CLAVE_MAJOR_PGMA_ACAD = B.CLAVE_MAJOR_PGMA_ACAD
-                     AND A.CLAVE_ESCUELA_NACIONAL = B.CLAVE_ESCUELA_NACIONAL
+                     AND C.CLAVE_ESCUELA_NACIONAL = B.CLAVE_ESCUELA_NACIONAL
                      AND B.TIPO_CARGA = ''A''
                      AND B.ETAPA =  '''
       || V_VALOR_IND
@@ -175,14 +177,14 @@ BEGIN
                AND '
       || V_VALOR_IND
       || ' = ''SI''                           
-      AND A.CLAVE_ESCUELA_NACIONAL not in (10,11)      
+      AND C.CLAVE_ESCUELA_NACIONAL not in (10,11)      
       AND A.CLAVE_MAJOR_PGMA_ACAD IN (''ESC'', ''AMC'')
       AND IND_CONSIDERADO_BASE = ''SI''
       GROUP BY A.CLAVE_EJERCICIO_INDICADOR,
                A.CLAVE_CAMPUS,
                A.CLAVE_MAJOR_PGMA_ACAD,
                B.CLAVE_EJERCICIO_INDICADOR,
-               A.CLAVE_ESCUELA_NACIONAL';
+               C.CLAVE_ESCUELA_NACIONAL';
 
    --DBMS_OUTPUT.PUT_LINE(V_SQL_STMT);
    --actualiza el estatus de carga a I Inactivo antes de procesar la informacion
