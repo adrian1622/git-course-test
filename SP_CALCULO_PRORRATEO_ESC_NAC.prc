@@ -679,16 +679,18 @@ GROUP BY A.CLAVE_EJERCICIO_INDICADOR, A.CLAVE_CAMPUS, A.CLAVE_MAJOR_PGMA_ACAD
                              AND A.CLAVE_CAMPUS = E.CLAVE_CAMPUS
                              AND A.CLAVE_MAJOR_PGMA_ACAD =
                                     E.CLAVE_MAJOR_PGMA_ACAD
-                 WHERE     E.CLAVE_EJERCICIO_INDICADOR = '''
+                      JOIN DMESCO.ATRA_REL_MAJOR_ESCUELA F
+                         ON E.CLAVE_MAJOR_SOLICITANTE = F.CLAVE_MAJOR_PGMA_ACAD              
+              WHERE     E.CLAVE_EJERCICIO_INDICADOR = '''
       || P_CLAVE_EJERCICIO_INDICADOR
       || '''
                        AND E.CORTE_ATRA_DET_SOLICITANTE = '''
       || P_CORTE
       || '''
                AND E.FECHA_INFORMACION = TO_DATE ( '''||FECHA_INFORMACION ||''', ''YYYY-MM-DD'')      
-                 AND E.CLAVE_ESCUELA_NACIONAL IN (10, 11)
+                 AND F.CLAVE_ESCUELA_NACIONAL IN (10, 11)
                        AND A.CLAVE_MAJOR_PGMA_ACAD IN (''ESC'', ''AMC'')      
-      AND IND_CONSIDERADO_BASE = ''SI''           ))
+      AND E.IND_CONSIDERADO_BASE = ''SI''           ))
 ';
 
    --DBMS_OUTPUT.PUT_LINE (V_SQL_STMT_DISTRIBUCION);
